@@ -258,6 +258,7 @@ var Player = (function (_EventEmitter) {
     value: function next() {
       var list = this._list;
       var current = this.playing;
+      if (null === current) return;
       var nextIndex = this.options.shuffle ? (0, _utils.chooseRandom)(_underscore2['default'].difference(list, [current._id])) : current._id + 1;
 
       if (nextIndex >= list.length) {
@@ -276,6 +277,7 @@ var Player = (function (_EventEmitter) {
     value: function previous() {
       var list = this._list;
       var current = this.playing;
+      if (null === current) return;
       if (this.options.shuffle) return next();
       var previousIndex = current._id - 1;
 

@@ -218,6 +218,7 @@ export default class Player extends EventEmitter {
   next() {
     let list = this._list
     let current = this.playing
+    if (null === current) return;
     let nextIndex = this.options.shuffle ? 
       chooseRandom(_.difference(list, [current._id])) :
       current._id + 1
@@ -237,6 +238,7 @@ export default class Player extends EventEmitter {
   previous() {
     let list = this._list
     let current = this.playing
+    if (null === current) return;
     if (this.options.shuffle) return next()
     let previousIndex = current._id - 1
 
