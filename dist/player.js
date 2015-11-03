@@ -1,3 +1,11 @@
+/**
+*
+* Command line interface mp3 player based on Node.js
+* @Author:   [turingou](http://guoyu.me)
+* @Created:  [2013/07/20]
+*
+**/
+
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -6,23 +14,13 @@ Object.defineProperty(exports, '__esModule', {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { desc = parent = getter = undefined; _again = false; var object = _x2,
-    property = _x3,
-    receiver = _x4; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-/**
-*
-* Command line interface mp3 player based on Node.js
-* @Author:   [turingou](http://guoyu.me)
-* @Created:  [2013/07/20]
-*
-**/
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var _fs = require('fs');
 
@@ -32,7 +30,7 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
-var _util = require('util');
+var _util = require("util");
 
 var _util2 = _interopRequireDefault(_util);
 
@@ -62,7 +60,7 @@ var _pcmVolume = require('pcm-volume');
 
 var _pcmVolume2 = _interopRequireDefault(_pcmVolume);
 
-var _events = require('events');
+var _events = require("events");
 
 var _utils = require('./utils');
 
@@ -71,8 +69,9 @@ var defaults = {
   'cache': false,
   'stream': false,
   'shuffle': false,
-  'downloads': _home2['default'](),
-  'http_proxy': process.env.HTTP_PROXY || process.env.http_proxy || null };
+  'downloads': (0, _home2['default'])(),
+  'http_proxy': process.env.HTTP_PROXY || process.env.http_proxy || null
+};
 
 /**
  * [Class Player]
@@ -81,6 +80,8 @@ var defaults = {
  */
 
 var Player = (function (_EventEmitter) {
+  _inherits(Player, _EventEmitter);
+
   function Player(songs, params) {
     _classCallCheck(this, Player);
 
@@ -93,16 +94,14 @@ var Player = (function (_EventEmitter) {
     this.history = [];
     this.paused = false;
     this.options = _underscore2['default'].extend(defaults, params);
-    this._list = _utils.format(songs || [], this.options.src);
+    this._list = (0, _utils.format)(songs || [], this.options.src);
     if (!this._list || !this._list.length) this._list = [];
   }
 
-  _inherits(Player, _EventEmitter);
+  // Enable or disable a option
 
   _createClass(Player, [{
     key: 'enable',
-
-    // Enable or disable a option
     value: function enable(k) {
       this.options[k] = true;
       return this;
@@ -113,32 +112,12 @@ var Player = (function (_EventEmitter) {
       this.options[k] = false;
       return this;
     }
-  }, {
-    key: 'list',
 
     /**
      * [Lists songs in the playlist,
      * Displays the src for each song returned in array,
      * Access with prop `player.list`]
      */
-    get: function () {
-      var _this2 = this;
-
-      if (!this._list) return;
-
-      return this._list.map(function (el) {
-        return el[_this2.options.src];
-      });
-    }
-  }, {
-    key: 'playing',
-
-    // Get the lastest playing song
-    get: function () {
-      if (!this.history.length) return null;
-
-      return this._list[this.history[this.history.length - 1]];
-    }
   }, {
     key: 'play',
 
@@ -147,9 +126,9 @@ var Player = (function (_EventEmitter) {
      * @param  {Number} index [the selected index of first played song]
      */
     value: function play() {
-      var _this3 = this;
+      var _this = this;
 
-      var index = arguments[0] === undefined ? 0 : arguments[0];
+      var index = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
 
       if (this._list.length <= 0) return;
       if (!_underscore2['default'].isNumber(index)) index = 0;
@@ -159,17 +138,17 @@ var Player = (function (_EventEmitter) {
       var song = this._list[index];
 
       this.paused = false;
-      this.read(song[this.options.src], function (err, pool) {
-        if (err) return _this3.emit('error', err);
+      this.read(song['stream'] || song[this.options.src], function (err, pool) {
+        if (err) return _this.emit('error', err);
 
-        _this3.meta(pool, function (err, data) {
+        _this.meta(pool, function (err, data) {
           if (!err) song.meta = data;
         });
 
-        _this3.lameStream = new _lame2['default'].Decoder();
+        _this.lameStream = new _lame2['default'].Decoder();
 
-        pool.pipe(_this3.lameStream).once('format', onPlaying).once('finish', function () {
-          return _this3.next();
+        pool.pipe(_this.lameStream).once('format', onPlaying).once('finish', function () {
+          return _this.next();
         });
 
         function onPlaying(f) {
@@ -179,7 +158,8 @@ var Player = (function (_EventEmitter) {
 
           self.speaker = {
             'readableStream': this,
-            'Speaker': speaker };
+            'Speaker': speaker
+          };
 
           self.emit('playing', song);
           self.history.push(index);
@@ -195,45 +175,48 @@ var Player = (function (_EventEmitter) {
 
       return this;
     }
-  }, {
-    key: 'setVolume',
 
     /**
      * [Set playback volume]
      * @param  {Number}   volume   [Volume level percentage 0.0-1.0]
      */
+  }, {
+    key: 'setVolume',
     value: function setVolume(volume) {
       if (!this.speaker) return;
 
       this.speaker.Speaker.setVolume(volume);
     }
-  }, {
-    key: 'read',
 
     /**
      * [Read MP3 src and check if we're going to download it.]
      * @param  {String}   src      [MP3 file src, would be local path or URI (http/https)]
      * @param  {Function} callback [callback with err and file stream]
      */
+  }, {
+    key: 'read',
     value: function read(src, callback) {
+      var canStream = src.createReadStream;
+      if (canStream) return callback(null, src.createReadStream());
+
       var isLocal = !(src.indexOf('http') == 0 || src.indexOf('https') == 0);
 
       // Read local file stream if not a valid URI
       if (isLocal) return callback(null, _fs2['default'].createReadStream(src));
 
-      var file = _path2['default'].join(this.options.downloads, _utils.fetchName(src));
+      var file = _path2['default'].join(this.options.downloads, (0, _utils.fetchName)(src));
 
       if (_fs2['default'].existsSync(file)) return callback(null, _fs2['default'].createReadStream(file));
 
       this.download(src, callback);
     }
-  }, {
-    key: 'pause',
 
     /**
      * [Pause or resume audio]
      * @return {player} this
      */
+  }, {
+    key: 'pause',
     value: function pause() {
       if (this.paused) {
         this.speaker.Speaker = new _pcmVolume2['default']();
@@ -247,14 +230,14 @@ var Player = (function (_EventEmitter) {
       this.paused = !this.paused;
       return this;
     }
-  }, {
-    key: 'stop',
 
     /**
      * [Stop playing and unpipe stream.
      * No params for now.]
      * @return {Bool} [always `false`]
      */
+  }, {
+    key: 'stop',
     value: function stop() {
       if (!this.speaker) return;
 
@@ -264,18 +247,18 @@ var Player = (function (_EventEmitter) {
 
       return;
     }
-  }, {
-    key: 'next',
 
     /**
      * [Stop playing and switch to next song,
      * if there is no next song, trigger a `No next song` error event]
      * @return {player} this
      */
+  }, {
+    key: 'next',
     value: function next() {
       var list = this._list;
       var current = this.playing;
-      var nextIndex = this.options.shuffle ? _utils.chooseRandom(_underscore2['default'].difference(list, [current._id])) : current._id + 1;
+      var nextIndex = this.options.shuffle ? (0, _utils.chooseRandom)(_underscore2['default'].difference(list, [current._id])) : current._id + 1;
 
       if (nextIndex >= list.length) {
         this.emit('error', 'No next song was found');
@@ -289,33 +272,52 @@ var Player = (function (_EventEmitter) {
       return this;
     }
   }, {
-    key: 'add',
+    key: 'previous',
+    value: function previous() {
+      var list = this._list;
+      var current = this.playing;
+      if (this.options.shuffle) return next();
+      var previousIndex = current._id - 1;
+
+      if (previousIndex < 0) {
+        this.emit('error', 'No previous song was found');
+        this.emit('finish', current);
+        return this;
+      }
+
+      this.stop();
+      this.play(previousIndex);
+
+      return this;
+    }
 
     /**
      * [Add a new song to the playlist,
      * If provided `song` is a String, it will be converted to a `Song` Object.]
      * @param {String|Object} song [src URI of new song or the object of new song.]
      */
+  }, {
+    key: 'add',
     value: function add(song) {
       var latest = _underscore2['default'].isObject(song) ? song : {};
 
       latest._id = this._list.length;
 
       if (_underscore2['default'].isString(song)) {
-        latest._name = _utils.splitName(song);
+        latest._name = (0, _utils.splitName)(song);
         latest[this.options.src] = song;
       }
 
       this._list.push(latest);
     }
-  }, {
-    key: 'download',
 
     /**
      * [Download a mp3 file from its URI]
      * @param  {String}   src      [the src URI of mp3 file]
      * @param  {Function} callback [callback with err and file stream]
      */
+  }, {
+    key: 'download',
     value: function download(src, callback) {
       var self = this;
       var called = false;
@@ -355,7 +357,7 @@ var Player = (function (_EventEmitter) {
         if (!isSave) return callback(null, pool);
 
         // Save this stream as file in download directory
-        var file = _path2['default'].join(self.options.downloads, _utils.fetchName(src));
+        var file = _path2['default'].join(self.options.downloads, (0, _utils.fetchName)(src));
 
         self.emit('downloading', src);
         pool.pipe(_fs2['default'].createWriteStream(file));
@@ -368,12 +370,12 @@ var Player = (function (_EventEmitter) {
         if (!called) callback(err);
       }
     }
-  }, {
-    key: 'meta',
 
     // Fetch metadata from local or remote mp3 stream
+  }, {
+    key: 'meta',
     value: function meta(stream, callback) {
-      var _this4 = this;
+      var _this2 = this;
 
       try {
         var mm = require('musicmetadata');
@@ -386,16 +388,16 @@ var Player = (function (_EventEmitter) {
       };
 
       stream.on('error', function (err) {
-        return _this4.emit('error', '出错了 ' + err.code + ': ' + err.path);
+        return _this2.emit('error', '出错了 ' + err.code + ': ' + err.path);
       });
 
       return mm(stream, options, callback);
     }
-  }, {
-    key: 'progress',
 
     // Format metadata with template
     // And output to `stdout`
+  }, {
+    key: 'progress',
     value: function progress(metadata) {
       var total = 70;
       var info = metadata.title;
@@ -410,7 +412,7 @@ var Player = (function (_EventEmitter) {
 
         // Move cursor to beginning of line
         stdout.cursorTo(0);
-        stdout.write(_utils.getProgress(total - dots, total, info));
+        stdout.write((0, _utils.getProgress)(total - dots, total, info));
 
         setTimeout(callback, speed);
 
@@ -422,6 +424,26 @@ var Player = (function (_EventEmitter) {
         stdout.clearLine();
         stdout.cursorTo(0);
       });
+    }
+  }, {
+    key: 'list',
+    get: function get() {
+      var _this3 = this;
+
+      if (!this._list) return;
+
+      return this._list.map(function (el) {
+        return el[_this3.options.src];
+      });
+    }
+
+    // Get the lastest playing song
+  }, {
+    key: 'playing',
+    get: function get() {
+      if (!this.history.length) return null;
+
+      return this._list[this.history[this.history.length - 1]];
     }
   }]);
 

@@ -94,7 +94,7 @@ export default class Player extends EventEmitter {
     let song = this._list[index]
 
     this.paused = false
-    this.read(song[this.options.src], (err, pool) => {
+    this.read((song['stream'] || song[this.options.src]), (err, pool) => {
       if (err)
         return this.emit('error', err)
 
@@ -152,6 +152,9 @@ export default class Player extends EventEmitter {
    * @param  {Function} callback [callback with err and file stream]
    */
   read(src, callback) {
+    var canStream = src.createReadStream;
+    if (canStream) return callback(null, src.createReadStream());
+
     var isLocal = !(src.indexOf('http') == 0 || src.indexOf('https') == 0)
 
     // Read local file stream if not a valid URI
@@ -227,6 +230,24 @@ export default class Player extends EventEmitter {
 
     this.stop()
     this.play(nextIndex)
+
+    return this
+  }
+
+  previous() {
+    let list = this._list
+    let current = this.playing
+    if (this.options.shuffle) return next()
+    let previousIndex = current._id - 1
+
+    if (previousIndex < 0) {
+      this.emit('error', 'No previous song was found')
+      this.emit('finish', current)
+      return this
+    }
+
+    this.stop()
+    this.play(previousIndex)
 
     return this
   }
